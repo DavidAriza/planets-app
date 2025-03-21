@@ -32,7 +32,7 @@ Riverpod is used to manage state because it is robust, typically requires less b
 
 Hive serves as a local database solution for storing favorite planets. It is fast, lightweight, and non-relational, making it perfect for our use case.
 
-cached_network_image is crucial for improving performance when loading lists of elements with images.
-
 dartz package for better error handling – Either<Failure, Success> helps return failures or results instead of just throwing exceptions.
+
+go router is a powerful routing package that simplifies navigation
 
