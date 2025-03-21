@@ -1,8 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:planets_app/core/constants/app_constants.dart';
-import 'package:planets_app/core/shared/presentation/widgets/planet_error_image.dart';
 import 'package:planets_app/domain/entities/planet.dart';
 
 class PlanetListViewCard extends StatelessWidget {
@@ -23,12 +20,11 @@ class PlanetListViewCard extends StatelessWidget {
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(8),
-                child: CachedNetworkImage(
-                  imageUrl: kIsWeb ? '${AppConstants.proxyImage}${planet.image!}' : planet.image!,
+                child: Image.network(
+                  planet.image!,
                   width: 100,
                   height: 100,
                   fit: BoxFit.cover,
-                  errorWidget: (context, url, error) => PlanetErrorImage(planetName: planet.name!),
                 ),
               ),
               const SizedBox(width: 16),

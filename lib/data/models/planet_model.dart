@@ -1,3 +1,4 @@
+import 'package:planets_app/core/utils/set_planet_image.dart';
 import 'package:planets_app/domain/entities/planet.dart';
 
 // ignore: must_be_immutable
@@ -16,7 +17,7 @@ class PlanetModel extends Planet {
         name: json['name'] ?? '',
         mass: json['mass_kg'] ?? '',
         orbitalDisctance: json['orbital_distance_km'] ?? 0,
-        image: json['image'],
+        image: setPlanetImage(json['name']),
         description: json['description']);
   }
 

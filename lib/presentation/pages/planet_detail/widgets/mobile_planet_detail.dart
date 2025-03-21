@@ -1,10 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:planets_app/core/constants/app_constants.dart';
 import 'package:planets_app/core/shared/presentation/widgets/background_scaffold.dart';
-import 'package:planets_app/core/shared/presentation/widgets/planet_error_image.dart';
 import 'package:planets_app/domain/entities/planet.dart';
 import 'package:planets_app/presentation/pages/planet_detail/widgets/add_to_favorite_button.dart';
 import 'package:planets_app/presentation/pages/planet_detail/widgets/info_row.dart';
@@ -31,10 +28,9 @@ class MobileDetail extends StatelessWidget {
                 SizedBox(
                   height: size.height * 0.4,
                   width: double.infinity,
-                  child: CachedNetworkImage(
-                    imageUrl: kIsWeb ? '${AppConstants.proxyImage}${planet.image!}' : planet.image!,
+                  child: Image.network(
+                    planet.image!,
                     fit: BoxFit.cover,
-                    errorWidget: (context, url, error) => PlanetErrorImage(planetName: planet.name!),
                   ),
                 ),
                 Positioned(

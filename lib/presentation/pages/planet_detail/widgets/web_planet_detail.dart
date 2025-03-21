@@ -1,12 +1,8 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:planets_app/core/constants/app_constants.dart';
-import 'package:planets_app/core/shared/presentation/widgets/planet_error_image.dart';
 import 'package:planets_app/domain/entities/planet.dart';
 import 'package:planets_app/presentation/pages/planet_detail/widgets/add_to_favorite_button.dart';
 import 'package:planets_app/presentation/pages/planet_detail/widgets/info_row.dart';
-import 'package:cached_network_image_platform_interface/cached_network_image_platform_interface.dart';
 
 class WebDetail extends StatelessWidget {
   const WebDetail({
@@ -31,11 +27,9 @@ class WebDetail extends StatelessWidget {
                   children: [
                     ClipRRect(
                       borderRadius: BorderRadius.circular(12),
-                      child: CachedNetworkImage(
-                        imageUrl: '${AppConstants.proxyImage}${planet.image!}',
-                        imageRenderMethodForWeb: ImageRenderMethodForWeb.HttpGet,
+                      child: Image.network(
+                        planet.image!,
                         fit: BoxFit.contain,
-                        errorWidget: (context, url, error) => PlanetErrorImage(planetName: planet.name!),
                       ),
                     ),
                     Positioned(
