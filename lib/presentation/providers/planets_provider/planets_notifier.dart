@@ -18,31 +18,24 @@ class PlanetsNotifier extends StateNotifier<PlanetsState> {
     required this.addPlanetToFavorites,
     required this.removePlanetFromFavorites,
     required this.isInFavorites,
-  }) : super(PlanetsState()) {
-    loadPlanets();
-  }
+  }) : super(PlanetsState());
 
   List<Planet>? _planets;
 
   Future<void> loadPlanets() async {
-    // Set loading state but preserve other state properties
     state = state.copyWith(status: PlanetsStatus.loading, selectedPlanet: null);
 
     final result = await getPlanetsUseCase.call(NoParams());
 
     result.fold((failure) {
-      // On failure, update state with error but preserve other properties
       state = state.copyWith(errorMessage: failure.message, status: PlanetsStatus.error);
     }, (planets) {
-      // Only update if we actually got planets
       if (planets.isNotEmpty) {
         _planets = planets;
         state = state.copyWith(planets: planets, status: PlanetsStatus.success);
       } else {
-        // Handle empty planets case - still mark as success but with empty list
         _planets = [];
         state = state.copyWith(planets: const [], status: PlanetsStatus.success);
-        // You might want to log this for debugging
       }
     });
   }
@@ -95,9 +88,7 @@ class PlanetsNotifier extends StateNotifier<PlanetsState> {
       );
       checkIfPlanetIsInFavorites(foundPlanet.name!);
     } else {
-      // Solo cambiamos a notFound
       state = state.copyWith(status: PlanetsStatus.notFound);
-      // No necesitas hacer nada más aquí, la redirección se maneja en GoRouter
     }
   }
 

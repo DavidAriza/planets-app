@@ -2,15 +2,11 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:planets_app/core/constants/app_constants.dart';
-import 'package:planets_app/core/shared/presentation/widgets/background_scaffold.dart';
 import 'package:planets_app/core/shared/presentation/widgets/planet_error_image.dart';
 import 'package:planets_app/domain/entities/planet.dart';
 import 'package:planets_app/presentation/pages/planet_detail/widgets/add_to_favorite_button.dart';
 import 'package:planets_app/presentation/pages/planet_detail/widgets/info_row.dart';
 import 'package:cached_network_image_platform_interface/cached_network_image_platform_interface.dart';
-
-import 'package:flutter/material.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 
 class WebDetail extends StatelessWidget {
   const WebDetail({
@@ -23,14 +19,12 @@ class WebDetail extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black, // Space-themed dark background
+      backgroundColor: Colors.black,
       body: SafeArea(
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: 50),
-          // Prevents content from being too stretched
           child: Row(
             children: [
-              /// **Left - Planet Image**
               Expanded(
                 child: Stack(
                   alignment: Alignment.center,
@@ -58,14 +52,11 @@ class WebDetail extends StatelessWidget {
               const SizedBox(
                 width: 50,
               ),
-
-              /// **Right - Details Section**
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    /// **Planet Name + Favorite Button**
                     Flexible(
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -81,10 +72,7 @@ class WebDetail extends StatelessWidget {
                         ],
                       ),
                     ),
-
                     const SizedBox(height: 16),
-
-                    /// **Planet Description**
                     Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
@@ -98,10 +86,7 @@ class WebDetail extends StatelessWidget {
                             ),
                       ),
                     ),
-
                     const SizedBox(height: 32),
-
-                    /// **Planet Info**
                     InfoRow(
                       label: 'Distance from Sun:',
                       value: '${planet.orbitalDisctance} million km',

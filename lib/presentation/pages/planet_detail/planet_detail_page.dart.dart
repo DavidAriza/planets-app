@@ -1,9 +1,7 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:planets_app/core/di/injector.dart';
-import 'package:planets_app/core/router/app_router.dart';
 import 'package:planets_app/core/shared/presentation/widgets/background_scaffold.dart';
 import 'package:planets_app/presentation/pages/planet_detail/widgets/mobile_planet_detail.dart';
 import 'package:planets_app/presentation/pages/planet_detail/widgets/planet_not_found.dart';
@@ -46,7 +44,6 @@ class _PlanetDetailPageState extends ConsumerState<PlanetDetailPage> {
             return PlanetNotFound(
               onTap: () => context.replace('/planets'),
             );
-            ;
           } else if (state.status == PlanetsStatus.success && state.selectedPlanet != null) {
             return LayoutBuilder(
               builder: (ctx, constraints) {
