@@ -12,9 +12,13 @@ class HomePage extends StatelessWidget {
         alignment: Alignment.center,
         child: GestureDetector(
           onTap: () => context.go('/planets'),
-          child: Text(
-            'Ver planetas',
-            style: TextStyle(color: Colors.white, fontSize: 20),
+          child: Container(
+            color: Colors.transparent,
+            padding: EdgeInsets.all(10.0),
+            child: Text(
+              'Ver planetas',
+              style: TextStyle(color: Colors.white, fontSize: 20),
+            ),
           ),
         ),
       ),
