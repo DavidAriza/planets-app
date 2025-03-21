@@ -1,7 +1,6 @@
 import 'package:planets_app/core/use_case/use_case.dart';
 import 'package:planets_app/domain/entities/planet.dart';
 import 'package:planets_app/domain/use_cases/add_planet_to_favorites_use_case.dart';
-import 'package:planets_app/domain/use_cases/get_local_planets_use_case.dart';
 import 'package:planets_app/domain/use_cases/get_planets_use_case.dart';
 import 'package:planets_app/domain/use_cases/is_in_favorites_use_case.dart';
 import 'package:planets_app/domain/use_cases/remove_planet_from_favorites_use_case.dart';
@@ -10,27 +9,24 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class PlanetsNotifier extends StateNotifier<PlanetsState> {
   final GetPlanetsUseCase getPlanetsUseCase;
-  final GetLocalPlanetsUseCase getLocalPlanets;
   final AddPlanetToFavoritesUseCase addPlanetToFavorites;
   final RemovePlanetFromFavoritesUseCase removePlanetFromFavorites;
   final GetIsInFavoritesUseCase isInFavorites;
 
   PlanetsNotifier({
     required this.getPlanetsUseCase,
-    required this.getLocalPlanets,
     required this.addPlanetToFavorites,
     required this.removePlanetFromFavorites,
     required this.isInFavorites,
   }) : super(PlanetsState()) {
     loadPlanets();
-    getFavoritePlanets();
   }
 
   List<Planet>? _planets;
 
   Future<void> loadPlanets() async {
     // Set loading state but preserve other state properties
-    state = state.copyWith(status: PlanetsStatus.loading);
+    state = state.copyWith(status: PlanetsStatus.loading, selectedPlanet: null);
 
     final result = await getPlanetsUseCase.call(NoParams());
 
@@ -47,40 +43,17 @@ class PlanetsNotifier extends StateNotifier<PlanetsState> {
         _planets = [];
         state = state.copyWith(planets: const [], status: PlanetsStatus.success);
         // You might want to log this for debugging
-        print('API returned empty planets list');
       }
     });
   }
 
-  Future<void> getFavoritePlanets() async {
-    // Here we only update the favorite planets, not the entire state
-    final result = await getLocalPlanets.call(NoParams());
-
-    result.fold((failure) {
-      // Only update favorite planets related state
-      state = state.copyWith(
-        errorMessage: failure.message,
-        // Don't change the main status if we're just loading favorites
-      );
-    }, (favoritePlanets) {
-      // Update favorite planets without changing main status
-      state = state.copyWith(
-        favoritePlanets: favoritePlanets,
-        // Don't change the main status if we're just loading favorites
-      );
-    });
-  }
-
   Future<void> searchPlanets(String query) async {
-    // Make sure planets are loaded before searching
     if (_planets == null) {
       await loadPlanets();
-      // If still null after loading, return
       if (_planets == null) return;
     }
 
     if (query.isEmpty) {
-      // Reset to full list when query is empty
       state = state.copyWith(planets: _planets, status: PlanetsStatus.success);
       return;
     }
@@ -95,29 +68,36 @@ class PlanetsNotifier extends StateNotifier<PlanetsState> {
       return name.contains(searchLower) || mass.contains(searchLower) || radius.contains(searchLower);
     }).toList();
 
-    // Update state with filtered planets
     state = state.copyWith(planets: filteredPlanets, status: PlanetsStatus.success);
   }
 
-  // Rest of your methods remain the same...
   Future<void> loadPlanetDetails(String planetName) async {
-    if (_planets == null) {
+    state = state.copyWith(status: PlanetsStatus.loading);
+
+    if (_planets == null || _planets!.isEmpty) {
       await loadPlanets();
-    }
-    if (_planets != null) {
-      Planet? foundPlanet;
-      for (final planet in _planets!) {
-        if (planet.name!.toLowerCase() == planetName.toLowerCase()) {
-          foundPlanet = planet;
-          checkIfPlanetIsInFavorites(foundPlanet.name!);
-          break;
-        }
+      if (_planets == null || _planets!.isEmpty) {
+        state = state.copyWith(status: PlanetsStatus.error);
+        return;
       }
-      state = foundPlanet != null
-          ? state.copyWith(selectedPlanet: foundPlanet)
-          : state.copyWith(errorMessage: 'Planet not found', status: PlanetsStatus.error);
+    }
+
+    final foundPlanets = _planets!.where(
+      (planet) => planet.name!.toLowerCase() == planetName.toLowerCase(),
+    );
+
+    final foundPlanet = foundPlanets.isNotEmpty ? foundPlanets.first : null;
+
+    if (foundPlanet != null) {
+      state = state.copyWith(
+        selectedPlanet: foundPlanet,
+        status: PlanetsStatus.success,
+      );
+      checkIfPlanetIsInFavorites(foundPlanet.name!);
     } else {
-      state = state.copyWith(errorMessage: 'Unable to load planets', status: PlanetsStatus.error);
+      // Solo cambiamos a notFound
+      state = state.copyWith(status: PlanetsStatus.notFound);
+      // No necesitas hacer nada más aquí, la redirección se maneja en GoRouter
     }
   }
 
@@ -146,8 +126,11 @@ class PlanetsNotifier extends StateNotifier<PlanetsState> {
   Future<void> checkIfPlanetIsInFavorites(String name) async {
     final result = await isInFavorites.call(name);
     result.fold(
-        (failure) => state = state.copyWith(status: PlanetsStatus.error, errorMessage: failure.message),
-        (planet) =>
-            state = state.copyWith(selectedPlanet: state.selectedPlanet?.copyWith(isInFavorites: planet != null)));
+        (failure) => state = state.copyWith(
+              status: PlanetsStatus.notFavorite,
+            ),
+        (planet) => state = state.copyWith(
+              selectedPlanet: state.selectedPlanet?.copyWith(isInFavorites: planet != null),
+            ));
   }
 }

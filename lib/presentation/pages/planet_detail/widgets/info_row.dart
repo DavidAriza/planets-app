@@ -18,12 +18,14 @@ class InfoRow extends StatelessWidget {
               fontSize: 16,
             ),
           ),
-          Text(
-            value,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
+          Flexible(
+            child: Text(
+              value,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
         ],

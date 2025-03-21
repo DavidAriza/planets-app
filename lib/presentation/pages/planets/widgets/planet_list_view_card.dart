@@ -1,11 +1,14 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:planets_app/core/constants/app_constants.dart';
+import 'package:planets_app/core/shared/presentation/widgets/planet_error_image.dart';
 import 'package:planets_app/domain/entities/planet.dart';
 
-class PlanetHorizontalCard extends StatelessWidget {
+class PlanetListViewCard extends StatelessWidget {
   final Planet planet;
   final VoidCallback onTap;
-  const PlanetHorizontalCard({super.key, required this.planet, required this.onTap});
+  const PlanetListViewCard({super.key, required this.planet, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -18,17 +21,14 @@ class PlanetHorizontalCard extends StatelessWidget {
           padding: const EdgeInsets.all(12),
           child: Row(
             children: [
-              Hero(
-                tag: 'planet_image_${planet.name!}',
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: CachedNetworkImage(
-                    key: ValueKey(planet.image!),
-                    imageUrl: planet.image!,
-                    width: 100,
-                    height: 100,
-                    fit: BoxFit.cover,
-                  ),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: CachedNetworkImage(
+                  imageUrl: kIsWeb ? '${AppConstants.proxyImage}${planet.image!}' : planet.image!,
+                  width: 100,
+                  height: 100,
+                  fit: BoxFit.cover,
+                  errorWidget: (context, url, error) => PlanetErrorImage(planetName: planet.name!),
                 ),
               ),
               const SizedBox(width: 16),

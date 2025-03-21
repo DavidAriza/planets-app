@@ -13,17 +13,6 @@ class PlanetsLocalRepositoryImpl implements PlanetsLocalRepository {
   PlanetsLocalRepositoryImpl({required this.planetsLocalDataSource});
 
   @override
-  Either<Failure, List<Planet>> getFavoritePlanets() {
-    try {
-      final result = planetsLocalDataSource.getFavoritePlanets();
-      final planets = result.map((e) => e.toEntity()).toList();
-      return Right(planets);
-    } on HiveError catch (e) {
-      return Left(HiveFailure(e.message));
-    }
-  }
-
-  @override
   Future<Either<Failure, Unit>> addPlanetToFavorites(Planet item) async {
     try {
       final planetModel = PlanetModel.fromEntity(item);

@@ -25,7 +25,7 @@ class _SearchFieldState extends ConsumerState<SearchField> {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 10),
+      padding: const EdgeInsets.symmetric(vertical: 20),
       child: TextField(
         controller: _controller,
         style: textTheme.bodyLarge,

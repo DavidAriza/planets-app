@@ -7,9 +7,9 @@ class PlanetFavoriteButton extends ConsumerWidget {
   final Planet planet;
 
   const PlanetFavoriteButton({
-    Key? key,
+    super.key,
     required this.planet,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -38,10 +38,11 @@ class _AddToFavoritesButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
     return GestureDetector(
       onTap: onTap,
       child: Icon(isFavorite ? Icons.favorite : Icons.favorite_border,
-          color: isFavorite ? Colors.pink : Colors.white, size: 22),
+          color: isFavorite ? Colors.pink : Colors.white, size: width > 600 ? 35 : 22),
     );
   }
 }

@@ -3,7 +3,6 @@ import 'package:planets_app/data/models/planet_model.dart';
 import 'package:planets_app/domain/entities/planet.dart';
 
 abstract class PlanetsLocalDataSource {
-  List<PlanetModel> getFavoritePlanets();
   Future<void> addPlanetToFavorites(PlanetModel item);
   Future<void> removePlanetFromFavorites(String name);
   PlanetModel? isInFavorites(String name);
@@ -11,12 +10,6 @@ abstract class PlanetsLocalDataSource {
 
 class PlanetsLocalDataSourceImpl implements PlanetsLocalDataSource {
   final Box<Planet> _planetsBox = Hive.box<Planet>('planets');
-
-  @override
-  List<PlanetModel> getFavoritePlanets() {
-    print(_planetsBox.values);
-    return _planetsBox.values.map((e) => PlanetModel.fromEntity(e)).toList().reversed.toList();
-  }
 
   @override
   Future<void> addPlanetToFavorites(PlanetModel item) async {

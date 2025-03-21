@@ -1,7 +1,12 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:planets_app/core/di/injector.dart';
+import 'package:planets_app/core/router/app_router.dart';
+import 'package:planets_app/core/shared/presentation/widgets/background_scaffold.dart';
 import 'package:planets_app/presentation/pages/planet_detail/widgets/mobile_planet_detail.dart';
+import 'package:planets_app/presentation/pages/planet_detail/widgets/planet_not_found.dart';
 import 'package:planets_app/presentation/pages/planet_detail/widgets/web_planet_detail.dart';
 import 'package:planets_app/presentation/providers/planets_provider/planets_state.dart';
 
@@ -21,27 +26,28 @@ class _PlanetDetailPageState extends ConsumerState<PlanetDetailPage> {
   }
 
   @override
+  void didUpdateWidget(covariant PlanetDetailPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (oldWidget.planetName != widget.planetName) {
+      Future.microtask(() => ref.read(planetsNotifierProvider.notifier).loadPlanetDetails(widget.planetName));
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final state = ref.watch(planetsNotifierProvider);
-    return Scaffold(
+    return BackgroundScaffold(
       body: Builder(
         builder: (context) {
-          if (state.status == PlanetsStatus.loading || state.status == PlanetsStatus.loading) {
+          if (state.status == PlanetsStatus.loading) {
             return const Center(child: CircularProgressIndicator());
-          } else if (state.errorMessage != null) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(state.errorMessage!),
-                  ElevatedButton(
-                    onPressed: () => ref.read(planetsNotifierProvider.notifier).loadPlanetDetails(widget.planetName),
-                    child: const Text('Go to planet list!'),
-                  ),
-                ],
-              ),
+          } else if (state.status == PlanetsStatus.notFound) {
+            return PlanetNotFound(
+              onTap: () => context.replace('/planets'),
             );
-          } else if (state.selectedPlanet != null) {
+            ;
+          } else if (state.status == PlanetsStatus.success && state.selectedPlanet != null) {
             return LayoutBuilder(
               builder: (ctx, constraints) {
                 if (constraints.maxWidth > 600) {
@@ -52,7 +58,12 @@ class _PlanetDetailPageState extends ConsumerState<PlanetDetailPage> {
               },
             );
           } else {
-            return const Center(child: Text('Loading details...'));
+            return const Center(
+              child: Text(
+                'Loading details...',
+                style: TextStyle(color: Colors.white),
+              ),
+            );
           }
         },
       ),

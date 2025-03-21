@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:planets_app/domain/entities/planet.dart';
 
-enum PlanetsStatus { initial, loading, success, error }
+enum PlanetsStatus { initial, loading, success, error, notFavorite, notFound }
 
 class PlanetsState extends Equatable {
   final PlanetsStatus status;
